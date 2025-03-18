@@ -1,3 +1,6 @@
+// https://www.freecodecamp.org/news/how-to-code-your-own-event-emitter-in-node-js-a-step-by-step-guide-e13b7e7908e1/
+
+// https://github.com/nodejs/node/blob/36e89dd13cdf7d5a81e0d4b53c0070dd1790705e/lib/events.js#L2
 module.exports = class EventEmitter {
     listeners = {}
   
