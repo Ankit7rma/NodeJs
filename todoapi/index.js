@@ -34,7 +34,7 @@ app.post("/tasks",(req,res)=>{
 
 
 app.put("/tasks/:id",(req,res)=>{
-    const {id} = parseInt(req.params.id)
+    const id = parseInt(req.params.id)
     const {title,completed} = req.body
     const task = tasks.find((t) =>t.id=== id)
     if(!task){
@@ -51,6 +51,21 @@ app.put("/tasks/:id",(req,res)=>{
 
 
 })
+
+app.delete('/tasks/:id',(req,res)=>{
+    const id  = parseInt(req.params.id)
+    const taskIndex = tasks.findIndex(t => t.id === id);
+
+    if (taskIndex === -1) {
+        return res.status(404).json({ error: 'Task not found' });
+    } 
+    tasks.splice(taskIndex , 1)
+    res.status(204).send();
+})
+
+
+
+
 
 app.listen(port,(req,res)=>{
     console.log(`Server is running on port ${port}`)
