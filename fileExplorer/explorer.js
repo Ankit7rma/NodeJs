@@ -1,45 +1,62 @@
+#!/usr/bin/env node;
+
 // Node.js script that recursively explores a directory and its subdirectories, 
 // listing files (optionally filtered by extension) and directories, along with their details like size and type.
 
+
 const fs = require('fs').promises;
-const path = require('path');
 
-// Function to explore a directory
-async function exploreDirectory(dirPath, extension = '') {
-  try {
-    // Read the directory
-    const items = await fs.readdir(dirPath, { withFileTypes: true });
+const path = require('path')
 
-    // Loop through each item in the directory
-    for (const item of items) {
-      // Get the full path of the item
-      const fullPath = path.join(dirPath, item.name);
+const program = require("commander")
 
-      // Get item stats (size, type, etc.)
-      const stats = await fs.stat(fullPath);
 
-      // Determine type (file or directory)
-      const type = item.isDirectory() ? 'directory' : 'file';
+async function exploreDirectory( dirPath , extension= ''){
+   try {
+    const absolutePath = path.resolve(dirPath)
+    
+    const items =await fs.readdir(dirPath,{withFileTypes: true})
 
-      // If it's a file and matches the extension (or no extension filter), display it
-      if (type === 'file' && (extension === '' || path.extname(item.name) === extension)) {
-        console.log(`File: ${fullPath}, Size: ${stats.size} bytes, Type: ${type}`);
-      } else if (type === 'directory') {
-        // If it's a directory, display it and recurse into it
-        console.log(`Directory: ${fullPath}, Type: ${type}`);
-        await exploreDirectory(fullPath, extension); // Recursive call
-      }
+    for (const item of items){
+        const fullPath = path.join(dirPath,item.name)
+        const stats = await fs.stat(fullPath)
+        const type = stats.isDirectory() ? "directory" : "file";
+
+
+        if(type === "file" && (extension==="" || path.extname(item.name) === extension )){
+            console.log(`File:${fullPath}, size:${stats.size} bytes, Type:${type}`)
+        }else if(type === "directory"){
+            console.log(`Directory :${fullPath}, Type:${type}`)
+            await exploreDirectory(fullPath,extension)
+        }
+ 
     }
-  } catch (error) {
-    // Handle errors like permission denied
-    console.error(`Error reading ${dirPath}: ${error.message}`);
-  }
+
+   } catch (error) {
+     console.log(`Error Reading ${dirPath} : ${error.message}`)
+   }
+
 }
 
-// Test the function
-(async () => {
-  const directoryPath = './'; // Current directory
-  const extensionFilter = '.js'; // Filter for .js files
-  console.log(`Exploring directory: ${directoryPath}`);
-  await exploreDirectory(directoryPath, extensionFilter);
-})();
+// (async ()=>{
+//     const dirPath = "./"
+//     const extensionFilter = ".js"
+//     console.log(`Exploring Directories ${dirPath}`)
+//     await exploreDirectory(dirPath , extensionFilter)
+
+// })()
+
+// CLI Commander
+program
+  .version('1.0.0','-v, --version')
+  .description('File System Explorer to list files and directories')
+  .option('-p, --path <path>', 'Directory path to explore', './')
+  .option('-e, --ext <extension>', 'Filter files by extension (e.g., .js)', '')
+  .action(async (options) => {
+    const { path: dirPath, ext } = options;
+    console.log(`Exploring directory: ${dirPath} ${ext ? `with extension ${ext}` : ''}`);
+    await exploreDirectory(dirPath, ext);
+  });
+
+  // Parse command-line arguments
+program.parse(process.argv);

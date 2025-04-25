@@ -1,7 +1,10 @@
 {
-  "name": "fileexplorer",
+  "name": "file-explorer",
   "version": "1.0.0",
   "main": "index.js",
+  "bin": {
+    "explore": "./explorer.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -9,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "description": "",
+   
   "dependencies": {
-    "commander": "^13.1.0"
+    "commander": "^11.1.0"  
   }
 }
