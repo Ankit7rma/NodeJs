@@ -46,7 +46,7 @@ const parseLogFile = async () => {
 
   return { requestCount, averageResponseTime: calculateAverage(responseTimes), errorCount };
 };
-
+    
 // Calculate average response time
 const calculateAverage = (responseTimes) => {
   if (responseTimes.length === 0) return 0;
